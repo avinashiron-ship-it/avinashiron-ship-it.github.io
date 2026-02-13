@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>⚠️ Critical System Error – Heart Not Found</title>
+    <!-- Cyberpunk Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-color: #0d0d0d;
+        --neon-pink: #ff2e9f;
+        --neon-cyan: #00f7ff;
+        --text-color: #ffffff;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        cursor: none; /* Hide default cursor */
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: "Orbitron", sans-serif;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Custom Cursor */
+      #custom-cursor {
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        font-size: 24px;
+        transform: translate(-50%, -50%);
+        transition: transform 0.1s ease;
+      }
+
+      @media (hover: none) and (pointer: coarse) {
+        #custom-cursor {
+          display: none;
+        }
+        * {
+          cursor: auto;
+        }
+      }
+
+      /* Background Particles */
+      #particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+
+      /* Main Card */
+      #card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(10px);
+        padding: 3rem;
+        border-radius: 20px;
+        text-align: center;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 0 20px rgba(0, 247, 255, 0.2);
+        z-index: 10;
+        position: relative;
+        animation: pulse-border 2s infinite alternate;
+      }
+
+      @keyframes pulse-border {
+        0% {
+          box-shadow: 0 0 20px rgba(0, 247, 255, 0.2);
+          border-color: var(--glass-border);
+        }
+        100% {
+          box-shadow: 0 0 40px rgba(255, 46, 159, 0.4);
+          border-color: rgba(255, 46, 159, 0.5);
+        }
+      }
+
+      h1 {
+        color: var(--neon-pink);
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 0 10px var(--neon-pink);
+      }
+
+      h2 {
+        color: var(--neon-cyan);
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 0 5px var(--neon-cyan);
+      }
+
+      p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+      }
+
+      /* Loading Bar */
+      #loading-container {
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        margin-bottom: 2rem;
+        border-radius: 2px;
+        overflow: hidden;
+      }
+
+      #loading-bar {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+        transition: width 2s ease-out;
+        box-shadow: 0 0 10px var(--neon-pink);
+      }
+
+      /* Buttons */
+      .btn-container {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1rem;
+        position: relative;
+        min-height: 80px; /* Space for moving button */
+      }
+
+      .btn {
+        background: transparent;
+        border: 2px solid;
+        padding: 1rem 2.5rem;
+        font-size: 1.2rem;
+        font-family: "Orbitron", sans-serif;
+        font-weight: bold;
+        border-radius: 50px;
+        cursor: pointer; /* Fallback */
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        position: relative;
+      }
+
+      #btn-yes {
+        color: var(--neon-pink);
+        border-color: var(--neon-pink);
+        box-shadow: 0 0 15px rgba(255, 46, 159, 0.3);
+      }
+
+      #btn-yes:hover {
+        background: var(--neon-pink);
+        color: #000;
+        box-shadow: 0 0 30px rgba(255, 46, 159, 0.8);
+        transform: scale(1.1);
+      }
+
+      #btn-no {
+        color: var(--neon-cyan);
+        border-color: var(--neon-cyan);
+        box-shadow: 0 0 15px rgba(0, 247, 255, 0.3);
+        position: absolute; /* Needed for movement */
+        /* Initial position relative to container is handled by flex/margin if static, 
+               but we need absolute for free movement. Let's start it centered relative to itself.
+            */
+        position: relative;
+      }
+
+      #btn-no:hover {
+        box-shadow: 0 0 30px rgba(0, 247, 255, 0.8);
+      }
+
+      /* Popups / Images */
+      #popup-message {
+        position: fixed;
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid var(--neon-cyan);
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        z-index: 100;
+        pointer-events: none;
+        display: none;
+        box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
+      }
+
+      #arrow {
+        position: fixed;
+        font-size: 4rem;
+        color: var(--neon-pink);
+        z-index: 100;
+        display: none;
+        filter: drop-shadow(0 0 10px var(--neon-pink));
+        animation: bounce 1s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0) rotate(var(--rotation));
+        }
+        50% {
+          transform: translateY(-20px) rotate(var(--rotation));
+        }
+      }
+
+      .character-img {
+        position: fixed;
+        z-index: 100;
+        max-width: 200px;
+        display: none;
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+        bottom: 20px;
+        right: 20px;
+      }
+
+      /* Placeholder styling for missing images */
+      .character-placeholder {
+        font-size: 100px;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 100;
+        display: none;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      /* Success State */
+      .success-mode body {
+        background-color: #000;
+      }
+
+      .success-mode #card {
+        border-color: var(--neon-pink);
+        box-shadow: 0 0 50px var(--neon-pink);
+      }
+
+      .confetti-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 50;
+      }
+
+      /* Glitch Effect */
+      .glitch {
+        animation: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both
+          infinite;
+      }
+
+      @keyframes glitch {
+        0% {
+          transform: translate(0);
+        }
+        20% {
+          transform: translate(-2px, 2px);
+        }
+        40% {
+          transform: translate(-2px, -2px);
+        }
+        60% {
+          transform: translate(2px, 2px);
+        }
+        80% {
+          transform: translate(2px, -2px);
+        }
+        100% {
+          transform: translate(0);
+        }
+      }
+
+      /* Audio Control */
+      #audio-control {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        color: #fff;
+        opacity: 0.5;
+        z-index: 200;
+        cursor: pointer; /* Fallback */
+        font-size: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="custom-cursor">❤️</div>
+    <canvas id="particles"></canvas>
+
+    <!-- Audio Elements (Placeholders) -->
+    <!-- <audio id="sound-error" src="error.mp3"></audio> -->
+    <!-- <audio id="sound-sparkle" src="sparkle.mp3"></audio> -->
+    <!-- <audio id="bg-music" src="music.mp3" loop></audio> -->
+
+    <div id="card">
+      <h1>⚠️ Critical System Error</h1>
+      <h2>Error 404: Heart Not Found</h2>
+
+      <div id="loading-container">
+        <div id="loading-bar"></div>
+      </div>
+
+      <p id="main-text">
+        System scan shows heart currently in possession of Bakalasha.<br />
+        Would you like to officially accept ownership?
+      </p>
+
+      <div class="btn-container">
+        <button id="btn-yes" class="btn">💖 YES</button>
+        <button id="btn-no" class="btn">❌ NO</button>
+      </div>
+    </div>
+
+    <!-- Popups and Interactivity Elements -->
+    <div id="popup-message"></div>
+    <div id="arrow">➔</div>
+
+    <!-- Using emojis as temporary placeholders for images -->
+    <div id="crying-char" class="character-placeholder">😭</div>
+    <div id="cupid-char" class="character-placeholder">💘</div>
+
+    <!-- Real image tags (currently hidden/commented out or empty src until you add them) -->
+    <!-- <img id="real-crying-img" src="crying_character.png" class="character-img"> -->
+    <!-- <img id="real-cupid-img" src="cupid_character.png" class="character-img"> -->
+
+    <div id="audio-control">🔇</div>
+
+    <script>
+      // --- Configuration ---
+      const CONFIG = {
+        noClickCount: 0,
+        maxNoClicks: 5,
+        debug: false, // Easter egg counter
+      };
+
+      // --- Elements ---
+      const cursor = document.getElementById("custom-cursor");
+      const btnNo = document.getElementById("btn-no");
+      const btnYes = document.getElementById("btn-yes");
+      const card = document.getElementById("card");
+      const popup = document.getElementById("popup-message");
+      const arrow = document.getElementById("arrow");
+      const cryingChar = document.getElementById("crying-char");
+      const cupidChar = document.getElementById("cupid-char");
+      const loadingBar = document.getElementById("loading-bar");
+      const mainText = document.getElementById("main-text");
+
+      // --- Sound Effects (Mock functions since files might be missing) ---
+      function playSound(type) {
+        // const audio = document.getElementById(type === 'error' ? 'sound-error' : 'sound-sparkle');
+        // if(audio) audio.play().catch(e => console.log('Audio play failed', e));
+        console.log(`Playing sound: ${type}`);
+      }
+
+      // --- Custom Cursor ---
+      document.addEventListener("mousemove", (e) => {
+        cursor.style.left = e.clientX + "px";
+        cursor.style.top = e.clientY + "px";
+      });
+
+      document.addEventListener(
+        "mousedown",
+        () => (cursor.style.transform = "translate(-50%, -50%) scale(0.8)"),
+      );
+      document.addEventListener(
+        "mouseup",
+        () => (cursor.style.transform = "translate(-50%, -50%) scale(1)"),
+      );
+
+      // --- Loading Animation ---
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          loadingBar.style.width = "100%";
+        }, 500);
+      });
+
+      // --- NO Button Logic ---
+      btnNo.addEventListener("click", (e) => {
+        e.stopPropagation(); // prevent Easter egg click
+        CONFIG.noClickCount++;
+        playSound("error");
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        // Allow button to move freely now
+        btnNo.style.position = "fixed";
+        btnNo.style.zIndex = "100";
+
+        // Logic per click
+        if (CONFIG.noClickCount === 1) {
+          moveButton(0.85);
+          showPopup("Hmm… that seems incorrect 🤔");
+          pointArrowToYes();
+        } else if (CONFIG.noClickCount === 2) {
+          moveButton(0.7);
+          showPopup("System suggests reconsideration.");
+          pointArrowToYes();
+        } else if (CONFIG.noClickCount === 3) {
+          moveButton(0.5);
+          showPopup("Please please please? 🥺");
+          cryingChar.style.display = "block";
+          setTimeout(() => (cryingChar.style.display = "none"), 2000);
+          pointArrowToYes();
+        } else if (CONFIG.noClickCount === 4) {
+          moveButton(0.3);
+          btnNo.classList.add("glitch");
+          showPopup("Are you absolutely sure about that decision?");
+          pointArrowToYes();
+        } else if (CONFIG.noClickCount >= CONFIG.maxNoClicks) {
+          // Final interaction
+          btnNo.style.transform = "scale(0.1)";
+          document.body.classList.add("glitch");
+          setTimeout(() => {
+            document.body.classList.remove("glitch");
+            btnNo.remove(); // Bye bye
+
+            cupidChar.style.display = "block";
+            mainText.innerHTML =
+              "⚠️ System Override Initiated...<br>This timeline does not support that answer.";
+            mainText.style.color = "var(--neon-pink)";
+
+            // Auto-success after a delay? Or just prompt user to click Yes
+            // Let's hide the cupid after a bit and highlight YES
+            setTimeout(() => {
+              // cupidChar.style.display = 'none';
+            }, 3000);
+          }, 500);
+        }
+      });
+
+      function moveButton(scale) {
+        const cardRect = card.getBoundingClientRect();
+        const btnW = 120 * scale; // Approximate width
+        const btnH = 50 * scale;  // Approximate height
+        const padding = 20;
+
+        let newX, newY;
+        let safe = false;
+        let attempts = 0;
+
+        while (!safe && attempts < 20) {
+            // Random position within viewport
+            newX = Math.random() * (window.innerWidth - btnW - padding * 2) + padding;
+            newY = Math.random() * (window.innerHeight - btnH - padding * 2) + padding;
+
+            // Check collision with Card
+            if (
+                newX < cardRect.right + padding &&
+                newX + btnW > cardRect.left - padding &&
+                newY < cardRect.bottom + padding &&
+                newY + btnH > cardRect.top - padding
+            ) {
+                // Collides, retry
+                attempts++;
+            } else {
+                safe = true;
+            }
+        }
+        
+        // Fallback: if checking failed, just put checking top-left logic aside and force random pos
+        if (!safe) {
+             newX = Math.random() * (window.innerWidth - btnW - padding);
+             newY = Math.random() * (window.innerHeight - btnH - padding);
+        }
+
+        btnNo.style.position = 'fixed';
+        btnNo.style.left = `${newX}px`;
+        btnNo.style.top = `${newY}px`;
+        btnNo.style.transform = `scale(${scale})`;
+      }
+
+      function showPopup(text) {
+        popup.innerText = text;
+        popup.style.display = "block";
+
+        // Random pos near center
+        popup.style.left =
+          window.innerWidth / 2 - 100 + (Math.random() * 50 - 25) + "px";
+        popup.style.top =
+          window.innerHeight / 2 + 100 + (Math.random() * 50 - 25) + "px";
+
+        setTimeout(() => (popup.style.display = "none"), 2000);
+      }
+
+      function pointArrowToYes() {
+        const yesRect = btnYes.getBoundingClientRect();
+        const arrowX = yesRect.right + 20;
+        const arrowY = yesRect.top + 10;
+
+        arrow.style.left = `${arrowX}px`;
+        arrow.style.top = `${arrowY}px`;
+        arrow.style.setProperty("--rotation", "180deg"); // Point left towards YES
+        arrow.style.display = "block";
+
+        setTimeout(() => (arrow.style.display = "none"), 2000);
+      }
+
+      // --- YES Button Logic ---
+      btnYes.addEventListener("click", () => {
+        // Reset state
+        // document.body.classList.add('success-mode');
+        startConfetti();
+        playSound("sparkle");
+
+        // Hide other elements
+        btnNo.style.display = "none";
+        loadingBar.style.display = "none";
+        cupidChar.style.display = "none";
+        cryingChar.style.display = "none";
+
+        // Text Update
+        card.innerHTML = `
+                <h1 style="font-size: 3rem; animation: pulse 1s infinite;">🎉 SUCCESS! 🎉</h1>
+                <p style="font-size: 1.5rem;">You are officially my Valentine 2026 ❤️</p>
+                <p style="margin-top: 2rem; color: var(--neon-cyan);">"Thank you for making this idiot the happiest guy alive."</p>
+                <button onclick="location.reload()" style="margin-top:20px; background:none; border:1px solid #fff; color:#fff; padding:10px; cursor:pointer; border-radius:10px;">Restart Simulation</button>
+             `;
+
+        // Intense Glow
+        card.style.boxShadow = "0 0 100px var(--neon-pink)";
+        createFloatingHearts();
+      });
+
+      // --- Background Particles (Simple Canvas) ---
+      const canvas = document.getElementById("particles");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let particlesArray = [];
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.size = Math.random() * 2 + 0.5;
+          this.speedX = Math.random() * 1 - 0.5;
+          this.speedY = Math.random() * 1 - 0.5;
+          this.color = Math.random() > 0.5 ? "#ff2e9f" : "#00f7ff";
+        }
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          if (this.size > 0.2) this.size -= 0.01;
+          if (
+            this.size <= 0.2 ||
+            this.x < 0 ||
+            this.x > canvas.width ||
+            this.y < 0 ||
+            this.y > canvas.height
+          ) {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 0.5;
+          }
+        }
+        draw() {
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function initParticles() {
+        for (let i = 0; i < 50; i++) {
+          particlesArray.push(new Particle());
+        }
+      }
+
+      function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particlesArray.length; i++) {
+          particlesArray[i].update();
+          particlesArray[i].draw();
+        }
+        requestAnimationFrame(animateParticles);
+      }
+
+      initParticles();
+      animateParticles();
+
+      window.addEventListener("resize", () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+
+      // --- Confetti ---
+      function startConfetti() {
+        // Simple confetti using canvas overlay
+        const confettiCanvas = document.createElement("canvas");
+        confettiCanvas.classList.add("confetti-canvas");
+        document.body.appendChild(confettiCanvas);
+        const cCtx = confettiCanvas.getContext("2d");
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+
+        const confettiPieces = [];
+        const colors = ["#ff2e9f", "#00f7ff", "#ffffff", "#ffeb3b"];
+
+        for (let i = 0; i < 300; i++) {
+          confettiPieces.push({
+            x: Math.random() * confettiCanvas.width,
+            y: Math.random() * confettiCanvas.height - confettiCanvas.height,
+            w: Math.random() * 10 + 5,
+            h: Math.random() * 10 + 5,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            speed: Math.random() * 5 + 2,
+            rotation: Math.random() * 360,
+          });
+        }
+
+        function animateConfetti() {
+          cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+          confettiPieces.forEach((p) => {
+            p.y += p.speed;
+            p.rotation += 2;
+            if (p.y > confettiCanvas.height) p.y = -20;
+
+            cCtx.save();
+            cCtx.translate(p.x, p.y);
+            cCtx.rotate((p.rotation * Math.PI) / 180);
+            cCtx.fillStyle = p.color;
+            cCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            cCtx.restore();
+          });
+          requestAnimationFrame(animateConfetti);
+        }
+        animateConfetti();
+      }
+
+      // --- Floating Hearts ---
+      function createFloatingHearts() {
+        setInterval(() => {
+          const heart = document.createElement("div");
+          heart.innerHTML = "❤️";
+          heart.style.position = "fixed";
+          heart.style.left = Math.random() * window.innerWidth + "px";
+          heart.style.bottom = "-50px";
+          heart.style.fontSize = Math.random() * 20 + 10 + "px";
+          heart.style.transition = "bottom 5s ease-in, opacity 5s ease-in";
+          heart.style.zIndex = "0";
+          document.body.appendChild(heart);
+
+          setTimeout(() => {
+            heart.style.bottom = window.innerHeight + 50 + "px";
+            heart.style.opacity = "0";
+          }, 100);
+
+          setTimeout(() => heart.remove(), 5000);
+        }, 300);
+      }
+
+      // --- Easter Egg ---
+      let bgClicks = 0;
+      document.body.addEventListener("click", (e) => {
+        if (e.target === document.body || e.target.id === "particles") {
+          bgClicks++;
+          if (bgClicks === 5) {
+            alert("You found the secret. I love you even more. ❤️");
+            bgClicks = 0;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
