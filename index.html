@@ -226,8 +226,11 @@
       }
 
       #cupid-char {
-        max-width: 200px; /* Make the propose gif a bit smaller */
+        max-width: 200px;
+        display: block; /* Show by default */
       }
+      
+      /* Mobile override for size if needed, already handled in media query but ensure display is not hidden */
       
       .character-placeholder {
         font-size: 120px;
@@ -331,7 +334,7 @@
     <!-- Audio Elements -->
     <audio id="sound-click" src="click sound.mp3"></audio>
     <!-- <audio id="sound-sparkle" src="sparkle.mp3"></audio> -->
-    <!-- <audio id="bg-music" src="music.mp3" loop></audio> -->
+    <audio id="bg-music" src="bgmusic.mp3" loop></audio>
 
     <div id="card">
       <h1>⚠️ Critical System Error</h1>
@@ -398,6 +401,17 @@
         console.log(`Playing sound: ${type}`);
       }
 
+      // --- Background Music ---
+      const bgMusic = document.getElementById("bg-music");
+      if (bgMusic) {
+        bgMusic.volume = 0.5; 
+        const playBgMusic = () => {
+          bgMusic.play().catch((e) => console.log("Audio autoplay failed", e));
+          document.body.removeEventListener("click", playBgMusic);
+        };
+        document.body.addEventListener("click", playBgMusic);
+      }
+
       // --- NO Button Logic ---
       btnNo.addEventListener("click", (e) => {
         e.stopPropagation(); // prevent Easter egg click
@@ -427,26 +441,38 @@
         } else if (CONFIG.noClickCount === 3) {
           moveButton(0.5);
           showPopup("Please please please? 🥺");
+          cupidChar.style.display = "none"; // Hide propose gif
           cryingChar.style.display = "block";
-          setTimeout(() => (cryingChar.style.display = "none"), 2000);
+          setTimeout(() => {
+              cryingChar.style.display = "none";
+              if (CONFIG.noClickCount < CONFIG.maxNoClicks) cupidChar.style.display = "block"; // Show again if not game over
+          }, 2000);
           pointArrowToYes();
         } else if (CONFIG.noClickCount === 4) {
           moveButton(0.3);
           btnNo.style.position = "fixed"; 
           btnNo.classList.add("glitch");
           showPopup("Are you absolutely sure about that decision?");
+          cupidChar.style.display = "none"; // Hide propose gif
           frustratedChar.style.display = "block";
-          setTimeout(() => (frustratedChar.style.display = "none"), 2000);
+          setTimeout(() => {
+              frustratedChar.style.display = "none";
+              if (CONFIG.noClickCount < CONFIG.maxNoClicks) cupidChar.style.display = "block"; // Show again if not game over
+          }, 2000);
           pointArrowToYes();
         } else if (CONFIG.noClickCount >= CONFIG.maxNoClicks) {
           // Final interaction
+          cupidChar.style.display = "none"; // Should be hidden for heart broken? Or keep it? Let's hide it for dramatic effect
           btnNo.style.transform = "scale(0.1)";
           document.body.classList.add("glitch");
           setTimeout(() => {
             document.body.classList.remove("glitch");
             btnNo.remove(); // Bye bye
 
-            // Show propose gif (as Cupid)
+            // Show propose gif (as Cupid) again? Or keep it hidden?
+            // "Instead of the ending use the propose gift when asking".
+            // So maybe hide it here? Or show it?
+            // Let's bring it back as the final "override".
             cupidChar.style.display = "block";
             
             mainText.innerHTML =
@@ -542,7 +568,7 @@
         // Hide other elements
         btnNo.style.display = "none";
         loadingBar.style.display = "none";
-        cupidChar.style.display = "block"; // Show cupid/propose image
+        cupidChar.style.display = "none"; // Hide propose gif as it's replaced by success content
         cryingChar.style.display = "none";
         frustratedChar.style.display = "none";
         heartbrokenChar.style.display = "none";
@@ -552,8 +578,16 @@
                 <h1 style="font-size: 3rem; animation: pulse 1s infinite;">🎉 SUCCESS! 🎉</h1>
                 <p style="font-size: 1.5rem;">You are officially my Valentine 2026 ❤️</p>
                 <p style="margin-top: 2rem; color: var(--primary-pink);">"Thank you for making this idiot the happiest guy alive."</p>
+                <div class="tenor-gif-embed" data-postid="15815237770867960224" data-share-method="host" data-aspect-ratio="1" data-width="100%" style="margin: 20px 0;"><a href="https://tenor.com/view/giggle-cat-giggle-meng-giggling-meng-giggling-cat-cat-laugh-gif-15815237770867960224">Giggle Cat Giggle Meng Sticker</a>from <a href="https://tenor.com/search/giggle+cat-stickers">Giggle Cat Stickers</a></div>
                 <button onclick="location.reload()" style="margin-top:20px; background:var(--primary-pink); border:none; color:#fff; padding:15px; cursor:pointer; border-radius:10px; font-weight:bold; font-size:1.2rem; box-shadow:0 5px 0 rgba(0,0,0,0.1);">Wanna get my heart again?</button>
              `;
+
+        // Dynamically load Tenor script
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.async = true;
+        script.src = "https://tenor.com/embed.js";
+        document.body.appendChild(script);
 
         // Intense Glow
         card.style.boxShadow = "0 0 100px var(--neon-pink)";
