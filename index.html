@@ -17,15 +17,11 @@
         --border-color: #ff9eb5;
       }
 
+      /* Default cursor restored */
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-        cursor: none; /* Hide default cursor */
-      }
-      
-      button {
-          cursor: none; /* Ensure buttons also hide cursor */
       }
 
       body {
@@ -35,32 +31,13 @@
         color: var(--text-color);
         font-family: "The Girl Next Door", cursive;
         font-weight: 400;
-        height: 100vh;
+        height: 100dvh;
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start; /* Move content to upper side */
+        padding-top: 10vh; /* Add spacing from top */
         overflow: hidden;
         position: relative;
-      }
-
-      /* Custom Cursor */
-      #custom-cursor {
-        position: fixed;
-        pointer-events: none;
-        z-index: 9999;
-        font-size: 32px;
-        transform: translate(-50%, -50%);
-        transition: transform 0.1s ease;
-        filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
-      }
-
-      @media (hover: none) and (pointer: coarse) {
-        #custom-cursor {
-          display: none;
-        }
-        * {
-          cursor: auto;
-        }
       }
 
       /* Background Particles */
@@ -303,11 +280,52 @@
         40%, 60% { transform: translate3d(4px, 0, 0); }
       }
 
+      /* Mobile Optimization */
+      @media (max-width: 600px) {
+        body {
+            padding-top: 5vh;
+        }
+
+        #card {
+            padding: 1.5rem;
+            width: 95%;
+            margin-top: 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .character-img {
+            max-height: 30vh;
+            bottom: 0;
+        }
+        
+        #cupid-char {
+            max-width: 150px;
+        }
+      }
+
       /* Audio Control Removed */
     </style>
   </head>
   <body>
-    <div id="custom-cursor">❤️</div>
+
     <canvas id="particles"></canvas>
 
     <!-- Audio Elements -->
@@ -340,7 +358,7 @@
 
     <!-- Images -->
     <img id="crying-char" src="cry2.gif" class="character-img">
-    <img id="frustrated-char" src="frustrated.png" class="character-img">
+    <img id="frustrated-char" src="frustrated2.png" class="character-img">
     <img id="heartbroken-char" src="heartbroken.gif" class="character-img">
     <img id="cupid-char" src="propose.gif" class="character-img">
 
@@ -355,7 +373,7 @@
       };
 
       // --- Elements ---
-      const cursor = document.getElementById("custom-cursor");
+
       const btnNo = document.getElementById("btn-no");
       const btnYes = document.getElementById("btn-yes");
       const card = document.getElementById("card");
